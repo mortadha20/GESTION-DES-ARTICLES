@@ -1,11 +1,13 @@
 ﻿using GESTION_DES_ARTICLES.Models;
-using GESTION_DES_ARTICLES.Models.Repositories;
-using Microsoft.AspNetCore.Mvc;
 using GESTION_DES_ARTICLES.Models;
 using GESTION_DES_ARTICLES.Models.Repositories;
-
+using GESTION_DES_ARTICLES.Models.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 namespace GESTION_DES_ARTICLES.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class CategoryController : Controller
     {
         readonly ICategorieRepository CategRepository;
@@ -14,6 +16,7 @@ namespace GESTION_DES_ARTICLES.Controllers
             CategRepository = categRepository;
         }
 
+        [AllowAnonymous]
         public ActionResult Index() => View(CategRepository.GetAll());
 
         public ActionResult Details(int id) => View(CategRepository.GetById(id));
@@ -49,5 +52,6 @@ namespace GESTION_DES_ARTICLES.Controllers
             CategRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

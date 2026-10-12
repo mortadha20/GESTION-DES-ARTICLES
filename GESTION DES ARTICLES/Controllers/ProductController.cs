@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using GESTION_DES_ARTICLES.Models;
 using GESTION_DES_ARTICLES.Models.Repositories;
 using GESTION_DES_ARTICLES.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GESTION_DES_ARTICLES.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class ProductController : Controller
     {
         readonly IProductRepository ProductRepository;
@@ -23,9 +25,28 @@ namespace GESTION_DES_ARTICLES.Controllers
             CategRepository = categRepository;
             this.hostingEnvironment = hostingEnvironment;
         }
+        [AllowAnonymous]
+        public IActionResult Index(int? categoryId, int page = 1)
+        {
+            int pageSize = 4;
+            LoadCategories();
 
-        public ActionResult Index() => View(ProductRepository.GetAll());
+            IQueryable<Product> productsQuery = ProductRepository.GetAllProducts();
+            if (categoryId.HasValue)
+                productsQuery = productsQuery.Where(p => p.CategoryId == categoryId);
 
+            var totalProducts = productsQuery.Count();
+            var products = productsQuery
+                .OrderBy(p => p.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+            ViewBag.CurrentPage = page;
+            ViewBag.CategoryId = categoryId;
+            return View(products);
+        }
         public ActionResult Details(int id) => View(ProductRepository.GetById(id));
 
         // GET: Create
@@ -121,12 +142,18 @@ namespace GESTION_DES_ARTICLES.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Recherche
+        [AllowAnonymous]
         public ActionResult Search(string val)
         {
+            LoadCategories();
             var result = string.IsNullOrWhiteSpace(val)
                 ? ProductRepository.GetAll()
                 : ProductRepository.FindByName(val);
+
+            // La vue Index utilise ces valeurs : sans elles, la recherche plante
+            ViewBag.TotalPages = 1;
+            ViewBag.CurrentPage = 1;
+            ViewBag.CategoryId = null;
             return View("Index", result);
         }
 
@@ -145,6 +172,10 @@ namespace GESTION_DES_ARTICLES.Controllers
                 }
             }
             return uniqueFileName;
+        }
+        private void LoadCategories()
+        {
+            ViewData["Categories"] = CategRepository.GetAll();
         }
     }
 }

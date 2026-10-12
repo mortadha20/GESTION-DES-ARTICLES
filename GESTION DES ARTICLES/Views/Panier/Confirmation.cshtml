@@ -1,0 +1,14 @@
+﻿@model GESTION_DES_ARTICLES.Models.Order
+
+<h1>Votre commande a été validée avec succès !</h1>
+<p>Merci pour votre achat, @Model.CustomerName ! Votre commande a bien été enregistrée.</p>
+
+<div class="order-details">
+    <h2>Récapitulatif de votre commande</h2>
+    <p><strong>Numéro de commande :</strong> @Model.Id</p>
+    <p><strong>Date :</strong> @Model.OrderDate.ToString("dd/MM/yyyy à HH:mm")</p>
+    <p><strong>Montant total :</strong> @Model.TotalAmount</p>
+    <p><strong>Adresse de livraison :</strong> @Model.Address</p>
+</div>
+
+<a asp-controller="Product" asp-action="Index" class="btn btn-primary">Retour aux produits</a>

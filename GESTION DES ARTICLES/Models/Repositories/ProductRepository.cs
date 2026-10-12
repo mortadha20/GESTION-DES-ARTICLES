@@ -38,6 +38,10 @@ namespace GESTION_DES_ARTICLES.Models.Repositories
             }
             return p1;
         }
+        public IQueryable<Product> GetAllProducts()
+        {
+            return context.Products.Include(p => p.Category);
+        }
 
         public void Delete(int ProductId)
         {

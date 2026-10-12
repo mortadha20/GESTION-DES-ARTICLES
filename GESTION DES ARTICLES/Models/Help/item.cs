@@ -1,0 +1,21 @@
+﻿namespace GESTION_DES_ARTICLES.Models.Help
+{
+    public class Item
+    {
+        public int quantite { get; set; }
+        public Product Prod { get; set; }
+
+        public string Description => Prod.Name;
+        public float UnitPrice => Prod.Price;
+        public int categoryId => Prod.CategoryId;
+        public Category? category => Prod.Category;
+        public float TotalPrice => Prod.Price * quantite;
+
+        public Item(Product p)
+        {
+            Prod = p;
+        }
+
+        public bool Equals(Item item) => item.Prod.ProductId == Prod.ProductId;
+    }
+}

@@ -3,6 +3,8 @@
     ViewData["Title"] = "Liste des produits";
 }
 
+<h2>Liste des produits</h2>
+
 <div class="card-group">
     @foreach (var product in Model)
     {
@@ -12,14 +14,31 @@
                 <h5><b>Nom : </b> @product.Name</h5>
                 <h5><b>Prix : </b>@product.Price</h5>
                 <h5><b>Quantité : </b> @product.QteStock</h5>
-                <h5><b>Catégorie : @product.Category?.CategoryName</b></h5>
+                <h5><b>Catégorie : </b>@product.Category?.CategoryName</h5>
             </div>
             <img class="card-img-top imageThumbnail" src="@photoPath" asp-append-version="true" />
             <div class="card-footer text-center">
-                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary m-1">View</a>
-                <a asp-controller="Product" asp-action="Edit" asp-route-id="@product.ProductId" class="btn btn-primary m-1">Edit</a>
-                <a asp-controller="Product" asp-action="Delete" asp-route-id="@product.ProductId" class="btn btn-danger m-1">Delete</a>
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId"
+                   class="btn btn-primary m-1">Détails</a>
+
+                <a asp-controller="Panier" asp-action="AddProduct" asp-route-id="@product.ProductId"
+                   class="btn btn-outline-secondary m-1">Ajouter Au Panier</a>
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    <a asp-action="Edit" asp-route-id="@product.ProductId" class="btn btn-warning m-1">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@product.ProductId" class="btn btn-danger m-1">Delete</a>
+                }
             </div>
         </div>
+    }
+</div>
+
+<!-- Pagination -->
+<div class="pagination">
+    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+    {
+        <a asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId"
+           asp-route-page="@i" class="btn btn-secondary m-1">@i</a>
     }
 </div>
