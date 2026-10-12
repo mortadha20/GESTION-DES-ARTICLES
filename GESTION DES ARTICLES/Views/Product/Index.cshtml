@@ -1,0 +1,25 @@
+@model IEnumerable<GESTION_DES_ARTICLES.Models.Product>
+@{
+    ViewData["Title"] = "Liste des produits";
+}
+
+<div class="card-group">
+    @foreach (var product in Model)
+    {
+        var photoPath = "~/images/" + (product.Image ?? "noimage.jpg");
+        <div class="card m-3" style="min-width: 18rem; max-width:30.5%;">
+            <div class="card-header">
+                <h5><b>Nom : </b> @product.Name</h5>
+                <h5><b>Prix : </b>@product.Price</h5>
+                <h5><b>Quantité : </b> @product.QteStock</h5>
+                <h5><b>Catégorie : @product.Category?.CategoryName</b></h5>
+            </div>
+            <img class="card-img-top imageThumbnail" src="@photoPath" asp-append-version="true" />
+            <div class="card-footer text-center">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary m-1">View</a>
+                <a asp-controller="Product" asp-action="Edit" asp-route-id="@product.ProductId" class="btn btn-primary m-1">Edit</a>
+                <a asp-controller="Product" asp-action="Delete" asp-route-id="@product.ProductId" class="btn btn-danger m-1">Delete</a>
+            </div>
+        </div>
+    }
+</div>
